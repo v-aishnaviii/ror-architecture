@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reltio-on-Reltio architecture</title>
+  <style>
+    :root {
+      --text: #0e0e25;
+      --muted: #56568f;
+      --line: #e3e3f2;
+      --accent: #0000cc;
+      --wash: #f5f5fa;
+    }
+    * { box-sizing: border-box; }
+    html { font-size: 16px; }
+    body {
+      margin: 0 auto;
+      max-width: 980px;
+      padding: 40px 28px 80px;
+      font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.55;
+      background: #fff;
+    }
+    h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 36px 0 12px; color: var(--accent); }
+    h3 { font-size: 16px; margin: 24px 0 8px; }
+    p { margin: 0 0 12px; }
+    .lede { font-size: 18px; color: var(--muted); margin-bottom: 20px; }
+    .meta { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px 0; margin: 0 0 28px; }
+    figure { margin: 20px 0 16px; }
+    figure img { width: 100%; height: auto; border: 1px solid var(--line); background: #fff; }
+    figure.xl { margin-left: -48px; margin-right: -48px; }
+    figure.xl img { width: 100%; min-height: 480px; object-fit: contain; background: #fff; }
+    figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    ul, ol { margin: 0 0 14px; padding-left: 22px; }
+    li { margin: 0 0 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0 0 18px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12px; letter-spacing: .3px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    code { font-family: ui-monospace, Consolas, monospace; font-size: 0.92em; background: var(--wash); padding: 1px 5px; }
+    .callout { background: var(--wash); padding: 12px 16px; margin: 16px 0 20px; border-left: 3px solid var(--accent); }
+    .read { background: var(--wash); padding: 14px 16px; margin: 0 0 20px; }
+    .read h3 { margin-top: 0; }
+    .chain { font-family: ui-monospace, Consolas, monospace; font-size: 13px; background: var(--wash); padding: 14px 16px; overflow-x: auto; white-space: pre; line-height: 1.45; margin: 0 0 16px; }
+    @page { size: A4; margin: 16mm; }
+    @media print {
+      body { max-width: none; padding: 0; }
+      figure { break-inside: avoid; }
+      figure.xl { margin-left: 0; margin-right: 0; page-break-before: always; }
+      figure.xl img { min-height: 0; max-height: 170mm; width: 100%; object-fit: contain; }
+      h2 { break-after: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Reltio-on-Reltio architecture</h1>
+  <p class="lede">How Reltio uses Reltio Data Cloud to master its own customers, deployments, contracts, and product tenants. Three Cytoscape pictures from the live configuration, with a plain-language read of each.</p>
+  <p class="meta">Internal architecture brief · Live L3 on prod-usg (GET /configuration, 31 Aug 2026) · Reltio-on-Reltio Production refreshed 17 Jul 2026 · schemaVersion velocitypackb2b_20231.1.3.0 · Pictures: Cytoscape.js from the same L3</p>
+
+  <h2>1. What this is, in one minute</h2>
+  <p>Reltio-on-Reltio (RoR) is Reltio’s production tenant of <strong>Reltio Data Cloud</strong>. It is not a SKU we sell. It is the graph account teams, Professional Services, Support, and Forge agents query when they need a trusted view of a customer.</p>
+  <p>Everyday words map to these record types:</p>
+  <ul>
+    <li><strong>Account</strong> → Organization (filter <code>OrganizationType = Customer</code> for paying accounts)</li>
+    <li><strong>How they are deployed</strong> → Customer Deployment (the join hub)</li>
+    <li><strong>What they bought</strong> → Contract (there is no separate Subscription type)</li>
+    <li><strong>Instance they run</strong> → Tenant (Reltio’s record <em>about</em> their product instance)</li>
+    <li><strong>People at Reltio</strong> → Reltian (entity type <code>Employee</code>)</li>
+    <li><strong>People at the customer</strong> → Contact</li>
+  </ul>
+  <p>About 40,000 organization profiles exist; on the order of 200 are paying customers.</p>
+
+  <h2>2. Figure 1 — all entity types</h2>
+  <p>This is the full L3 entity graph: 15 colored circles and the relationships between them. Sources, connectors, and capabilities are not on this picture — they are Figure 3.</p>
+  <figure>
+    <img src="ror-figure-all.png" alt="Cytoscape diagram of Reltio-on-Reltio entity types and relationships" />
+    <figcaption>Figure 1. Cytoscape entity architecture from live L3. Colored circles are entity types. Arrows are relationships. A number on an arrow means more than one relationship type connects that pair.</figcaption>
+  </figure>
+  <div class="read">
+    <h3>How to read Figure 1</h3>
+    <p>Start at the big hubs, not at the edges.</p>
+    <ol>
+      <li><strong>Organization</strong> is the company (the account). Loops on that circle are parent/child and partner graphs (D&amp;B Hierarchy, Organization Affiliation).</li>
+      <li><strong>Customer Deployment</strong> is the working object for a briefing. <code>CompanyID</code> points back to Organization. Other arrows go forward to Tenant, Contract, and Reltian.</li>
+      <li><strong>Contract</strong> is the commercial agreement. Subscription attributes live here.</li>
+      <li><strong>Tenant</strong> is the product instance they run (TenantID, cloud, region). Connector flags sit on this type — shown in Figure 3.</li>
+      <li><strong>Reltian</strong> is who at Reltio works the account. The ReportsTo loop is the manager graph.</li>
+      <li><strong>Contact</strong> is people on the customer side. <strong>Opportunity</strong> is pipeline. <strong>Engagement</strong> is Professional Services. <strong>Ticket</strong> is support. <strong>Course</strong> is learning. <strong>Location</strong> is address.</li>
+    </ol>
+    <p>Faded / dashed circles (Individual, Household, Supplier, Campaign) are abstract types. They complete the model but are rarely queried day to day.</p>
+    <p><strong>One path:</strong> Salesforce account → Organization. Deal closes → Contract. Go-live → Customer Deployment (with nested tenants). Support case → Ticket. Identity always starts at Organization or Customer Deployment, never at a raw tenant ID.</p>
+  </div>
+
+  <h2>3. Figure 2 — commercial core (enlarged)</h2>
+  <p>Most questions only need eight types. This is that subgraph, laid out left-to-right so each relationship name is readable.</p>
+  <figure class="xl">
+    <img src="ror-figure-core.png" alt="Cytoscape diagram of the Reltio-on-Reltio commercial core with named relationships" />
+    <figcaption>Figure 2. Cytoscape commercial core. Self-loops omitted. Organization, Customer Deployment, Contract, and Tenant form the primary chain.</figcaption>
+  </figure>
+  <div class="read">
+    <h3>How to read Figure 2</h3>
+    <p>Read left to right. Each arrow is one named relationship (several names stacked means several types between the same pair).</p>
+    <p>Two walks, depending on the question:</p>
+    <div class="chain">Who is this customer? (start at Customer Deployment)
+Organization &lt;-- CompanyID -- Customer Deployment --&gt; Tenant
+Customer Deployment --&gt; Contract
+
+What did they buy? (start at Organization)
+Organization -- OrgToContract --&gt; Contract -- Contract To Tenant --&gt; Tenant</div>
+    <p>Opportunity feeds Organization and Contract. Engagement is PS delivery. Contact is customer people. Reltian is the internal team.</p>
+  </div>
+  <div class="callout">
+    <strong>Do not search Tenant to count Reltio’s fleet.</strong> RoR returns at most 10 rows per page and is the wrong population. Fleet inventory is the DevOps API or BigQuery <code>tenants_report</code>. Usage vs entitlement (CP / RSU / API) is BigQuery EDW, not RoR MCP.
+  </div>
+  <table>
+    <thead>
+      <tr><th>Circle in the picture</th><th>Type id</th><th>Plain meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Organization</td><td><code>Organization</code></td><td>The account. Use OrganizationType to pick Customer / Prospect / Partner.</td></tr>
+      <tr><td>Customer Deployment</td><td><code>CustomerDeployment</code></td><td>One deployment: use case, ARR, nested tenants, Zendesk, CTA.</td></tr>
+      <tr><td>Contract</td><td><code>Contract</code></td><td>What they bought: dates, ACV, product entitlements.</td></tr>
+      <tr><td>Tenant</td><td><code>Tenant</code></td><td>The instance they run, plus connector and capability flags.</td></tr>
+      <tr><td>Opportunity</td><td><code>Opportunity</code></td><td>Pipeline.</td></tr>
+      <tr><td>Engagement</td><td><code>Engagement</code></td><td>Professional Services work.</td></tr>
+      <tr><td>Reltian</td><td><code>Employee</code></td><td>Reltio people on the account.</td></tr>
+      <tr><td>Contact</td><td><code>Contact</code></td><td>Customer-side people.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Figure 3 — sources and connectors</h2>
+  <p>This picture is the integration layer around Organization, Customer Deployment, and Tenant. It answers “what feeds RoR, and what can that Tenant do?”</p>
+  <figure>
+    <img src="ror-figure-integration.png" alt="Cytoscape diagram of Reltio-on-Reltio sources, connector flags, and platform capabilities" />
+    <figcaption>Figure 3. Cytoscape integration layer from live L3.</figcaption>
+  </figure>
+  <div class="read">
+    <h3>How to read Figure 3</h3>
+    <ul>
+      <li><strong>Green dashed circles</strong> — configured sources (Salesforce, Zendesk, Gainsight, Marketo, D&amp;B, Okta, Skilljar, BigQuery, and others). These are systems that send data <em>into</em> RoR.</li>
+      <li><strong>Orange boxes</strong> — connector flags on Tenant. These are switches for what that product instance can do (Salesforce connector, BigQuery, Snowflake, Reltio Integration Hub, Reltio MCP Server, Reltio AgentFlow, DEA/NPI data tenants).</li>
+      <li><strong>Grey boxes</strong> — platform capabilities (RDM, Match IQ, Cleanse, Workflow, Queues, Analytics, image hosting, auth). Match and cleanse collapse duplicates into one best-version profile.</li>
+      <li><strong>Blue diamonds</strong> — logical graphs (D&amp;B Hierarchy, Organization Hierarchy, ReportsTo Graph).</li>
+      <li><strong>Hexagon</strong> — rule-based householding (Contact grouped into Household).</li>
+    </ul>
+    <p>A source is not a connector. Salesforce-the-source feeds Organization/Contact. The Salesforce connector flag on Tenant means that customer’s instance can use the Salesforce connector.</p>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Connector / product</th><th>Flag on Tenant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Salesforce connector</td><td><code>SFDC_enable</code></td></tr>
+      <tr><td>D&amp;B connector</td><td><code>DNB_CONNECTOR_enable</code></td></tr>
+      <tr><td>BigQuery connector</td><td><code>BIGQUERY_CONNECTOR_enable</code></td></tr>
+      <tr><td>Snowflake connector</td><td><code>SNOWFLAKE_CONNECTOR_enable</code></td></tr>
+      <tr><td>Reltio Integration Hub</td><td><code>RIH_enable</code></td></tr>
+      <tr><td>Reltio MCP Server</td><td><code>MCP_enabled</code></td></tr>
+      <tr><td>Reltio AgentFlow</td><td><code>agentFlow_enable</code></td></tr>
+      <tr><td>DEA data tenant</td><td><code>DT_DEA_enable</code></td></tr>
+      <tr><td>NPI data tenant</td><td><code>DT_NPI_enable</code></td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>Sources (37)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>CRM / CS / product</td><td>Salesforce, SFDC, Marketo, Gainsight, Aha, iCustomer</td></tr>
+      <tr><td>Support</td><td>Zendesk, IT-Jira, REA-Jira, ServiceNow</td></tr>
+      <tr><td>Finance / ERP</td><td>FinancialForce, QuadSci, ERP, SAP</td></tr>
+      <tr><td>Identity</td><td>oAuth, Okta</td></tr>
+      <tr><td>Enrichment</td><td>D&amp;B, BvD, ZoomInfo, LinkedIn</td></tr>
+      <tr><td>Social</td><td>Facebook, Twitter</td></tr>
+      <tr><td>Analytics</td><td>GBQ, PCC</td></tr>
+      <tr><td>Enablement / ops</td><td>Skilljar, AssetPanda, OC</td></tr>
+      <tr><td>Platform / cleanse</td><td>Reltio, RoR, ReltioGrouping, cleansers, FullNameBuilder, DT_B2B</td></tr>
+      <tr><td>Legacy</td><td>LegacyMDM, ThirdPartyList</td></tr>
+    </tbody>
+  </table>
+  <p>Interactive Cytoscape (zoom, filter, click): <code>assets/ontology-builder/ror-architecture.html</code>.</p>
+</body>
+</html>
