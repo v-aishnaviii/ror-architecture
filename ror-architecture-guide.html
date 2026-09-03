@@ -134,19 +134,18 @@ Organization -- OrgToContract --&gt; Contract -- Contract To Tenant --&gt; Tenan
   <h2>4. Figure 3 — sources and connectors</h2>
   <p>This picture is the integration layer around Organization, Customer Deployment, and Tenant. It answers “what feeds RoR, and what can that Tenant do?”</p>
   <figure>
-    <img src="ror-figure-integration.png" alt="Cytoscape diagram of Reltio-on-Reltio sources, connector flags, and platform capabilities" />
+    <img src="ror-figure-integration.png" alt="Cytoscape diagram of Reltio-on-Reltio sources and platform capabilities" />
     <figcaption>Figure 3. Cytoscape integration layer from live L3.</figcaption>
   </figure>
   <div class="read">
     <h3>How to read Figure 3</h3>
     <ul>
       <li><strong>Green dashed circles</strong> — configured sources (Salesforce, Zendesk, Gainsight, Marketo, D&amp;B, Okta, Skilljar, BigQuery, and others). These are systems that send data <em>into</em> RoR.</li>
-      <li><strong>Orange boxes</strong> — connector flags on Tenant. These are switches for what that product instance can do (Salesforce connector, BigQuery, Snowflake, Reltio Integration Hub, Reltio MCP Server, Reltio AgentFlow, DEA/NPI data tenants).</li>
       <li><strong>Grey boxes</strong> — platform capabilities (RDM, Match IQ, Cleanse, Workflow, Queues, Analytics, image hosting, auth). Match and cleanse collapse duplicates into one best-version profile.</li>
       <li><strong>Blue diamonds</strong> — logical graphs (D&amp;B Hierarchy, Organization Hierarchy, ReportsTo Graph).</li>
       <li><strong>Hexagon</strong> — rule-based householding (Contact grouped into Household).</li>
     </ul>
-    <p>A source is not a connector. Salesforce-the-source feeds Organization/Contact. The Salesforce connector flag on Tenant means that customer’s instance can use the Salesforce connector.</p>
+    <p>Connector flags (Salesforce, BigQuery, Reltio Integration Hub, and the rest) sit on Tenant. They are listed in the table below — they are not drawn as orange boxes on this picture.</p>
   </div>
   <table>
     <thead>

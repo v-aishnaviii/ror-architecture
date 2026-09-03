@@ -18,8 +18,8 @@
 <body>
   <div id="banner">
     <h1>Reltio-on-Reltio sources and connectors</h1>
-    <p>Live L3 · prod-usg · Cytoscape.js · Drag circles to move · Scroll to zoom</p>
-    <p id="legend">Green dashed circles = systems that send data in. Orange boxes = connector flags on Tenant. Grey boxes = platform capabilities. Blue diamonds = hierarchy graphs.</p>
+    <p>Live L3 · prod-usg · Cytoscape.js</p>
+    <p id="legend">Green dashed circles = systems that send data in. Grey boxes = platform capabilities. Blue diamonds = hierarchy graphs.</p>
   </div>
   <div id="cy"></div>
   <script>
@@ -40,8 +40,8 @@
       if (SCOPE === "core") return kind !== "entity" || !CORE.has(typeId);
       if (SCOPE === "integration") {
         if (kind === "entity") return !INTEGRATION.has(typeId);
-        if (kind === "interaction") return true;
-        return !(kind === "source" || kind === "connector" || kind === "capability" || kind === "graph" || kind === "grouping");
+        if (kind === "interaction" || kind === "connector") return true;
+        return !(kind === "source" || kind === "capability" || kind === "graph" || kind === "grouping");
       }
       return false;
     }
@@ -172,7 +172,7 @@
     });
     cy.nodes().filter((n) => hideByScope(n.data("kind"), n.data("typeId"), n.data("abstract"))).remove();
     const common = { animate:false, fit:true, padding: SCOPE === "core" ? 80 : 56 };
-    const done = function() {};
+    const done = function() { document.title = "READY"; };
     if (LAYOUT === "cose") cy.layout({ name:"cose", ...common, nodeRepulsion: 28000, idealEdgeLength: 140, gravity:0.18, numIter:2200, stop: done }).run();
     else cy.layout({ name:"dagre", ...common, rankDir:"LR", nodeSep: SCOPE === "core" ? 180 : 96, rankSep: SCOPE === "core" ? 380 : 200, edgeSep: SCOPE === "core" ? 80 : 40, stop: done }).run();
     }
