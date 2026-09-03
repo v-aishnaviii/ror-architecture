@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reltio-on-Reltio entity architecture</title>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+  <style>
+    html, body { margin:0; height:100%; background:#fff; font-family: Roboto, "Segoe UI", sans-serif; }
+    #banner { position:absolute; top:12px; left:24px; right:24px; z-index:2; }
+    #banner h1 { margin:0; font-size:22px; color:#0e0e25; }
+    #banner p { margin:4px 0 0; font-size:13px; color:#56568f; }
+    #legend { margin-top:8px; font-size:13px; color:#3d3d6b; }
+    #cy { position:absolute; inset:88px 0 0 0; }
+  </style>
+</head>
+<body>
+  <div id="banner">
+    <h1>Reltio-on-Reltio entity architecture</h1>
+    <p>Live L3 · prod-usg · Cytoscape.js · Drag circles to move · Scroll to zoom</p>
+    <p id="legend">Each colored circle is a record type. Each arrow is a relationship between two types. A number on an arrow means several relationship types share that pair.</p>
+  </div>
+  <div id="cy"></div>
+  <script>
+    const MODEL = {"source": "Reltio-on-Reltio Production Refreshed on 7/17/26 - Aakash", "schemaVersion": "velocitypackb2b_20231.1.3.0", "label": "B2B CT", "entities": [{"id": "Course", "label": "Course", "abstract": false, "attrs": 26, "matches": 1, "description": ""}, {"id": "Organization", "label": "Organization", "abstract": false, "attrs": 151, "matches": 6, "description": "Organization entity type details"}, {"id": "Supplier", "label": "Supplier", "abstract": true, "attrs": 77, "matches": 9, "description": "Organization details such as corporate hierarchy, financials, ownership etc."}, {"id": "Contract", "label": "Contract", "abstract": false, "attrs": 54, "matches": 1, "description": ""}, {"id": "Tenant", "label": "Tenant", "abstract": false, "attrs": 85, "matches": 1, "description": ""}, {"id": "CustomerDeployment", "label": "Customer Deployment", "abstract": false, "attrs": 66, "matches": 0, "description": ""}, {"id": "Engagement", "label": "Engagement", "abstract": false, "attrs": 32, "matches": 1, "description": ""}, {"id": "Employee", "label": "Reltian", "abstract": false, "attrs": 24, "matches": 5, "description": "Basic Employee & personal info, along with all available details internal employees"}, {"id": "Contact", "label": "Contact", "abstract": false, "attrs": 95, "matches": 6, "description": "Basic contact & personal info, along with all available details for current or prospective Contact clients"}, {"id": "Household", "label": "Household", "abstract": true, "attrs": 4, "matches": 0, "description": "Descriptive info for groups of individuals residing at the same location who collectively form a household"}, {"id": "Ticket", "label": "Ticket", "abstract": false, "attrs": 15, "matches": 0, "description": "Tickets across the organization"}, {"id": "Location", "label": "Location", "abstract": false, "attrs": 86, "matches": 1, "description": "Basic location info, such as address details and geocode attributes"}, {"id": "Individual", "label": "Individual", "abstract": true, "attrs": 26, "matches": 2, "description": "Basic contact & personal info, along with all available details for current or prospective individual clients"}, {"id": "Opportunity", "label": "Opportunity", "abstract": false, "attrs": 79, "matches": 0, "description": ""}, {"id": "Campaign", "label": "Campaign", "abstract": true, "attrs": 0, "matches": 0, "description": ""}], "relations": [{"id": "ReltianToNewCourse", "label": "Employee to Course", "from": "Employee", "to": "Course", "direction": "directed"}, {"id": "ReltianToPublishedPath", "label": "Employee to Published Path", "from": "Employee", "to": "Course", "direction": "directed"}, {"id": "SupplierHasAddress", "label": "Has Address", "from": "Supplier", "to": "Location", "direction": "directed"}, {"id": "OpportunityToContact", "label": "OpportunityToContact", "from": "Opportunity", "to": "Contact", "direction": "directed"}, {"id": "OpportunityToContactOwner", "label": "Opportunity To Contact Owner", "from": "Opportunity", "to": "Contact", "direction": "directed"}, {"id": "OpportunityToReltioTeam", "label": "OpportunityToReltioTeam", "from": "Opportunity", "to": "Employee", "direction": "directed"}, {"id": "TicketToReltioTeam", "label": "Ticket to Reltio Team", "from": "Ticket", "to": "Employee", "direction": "directed"}, {"id": "OpportunityToContract", "label": "OpportunityToContract", "from": "Opportunity", "to": "Contract", "direction": "directed"}, {"id": "OpportunityToAccount", "label": "Opportunity To Account", "from": "Opportunity", "to": "Organization", "direction": "directed"}, {"id": "HouseholdMembership", "label": "Household Membership", "from": "Contact", "to": "Household", "direction": "directed"}, {"id": "ContactToNewCourse", "label": "Contact to Course", "from": "Contact", "to": "Course", "direction": "directed"}, {"id": "ContactToPublishedPath", "label": "Contact to Published Path", "from": "Contact", "to": "Course", "direction": "directed"}, {"id": "OrgToPartnerContact", "label": "Affiliated with", "from": "Contact", "to": "Organization", "direction": "directed"}, {"id": "isRelatedTo", "label": "isRelatedTo", "from": "Tenant", "to": "Tenant", "direction": "bidirectional"}, {"id": "ContractToRdmTenant", "label": "ContractToRdmTenant", "from": "Contract", "to": "Tenant", "direction": "bidirectional"}, {"id": "OrgToContract", "label": "OrgToContract", "from": "Organization", "to": "Contract", "direction": "directed"}, {"id": "CustomerDeploymentRelationship", "label": "CustomerDeploymentRelationship", "from": "CustomerDeployment", "to": "Employee", "direction": "directed"}, {"id": "CompanyID", "label": "CompanyID", "from": "CustomerDeployment", "to": "Organization", "direction": "directed"}, {"id": "EndUserCustToTenant", "label": "EndUserCustToTenant", "from": "Organization", "to": "Tenant", "direction": "directed"}, {"id": "ContractToReltioEmployee", "label": "ContractToReltioEmployee", "from": "Contract", "to": "Employee", "direction": "directed"}, {"id": "BillTo", "label": "Billed To", "from": "Contact", "to": "Contract", "direction": "directed"}, {"id": "OrgToEngagementForCustomer", "label": "OrgToEngagementForCustomer", "from": "Organization", "to": "Engagement", "direction": "directed"}, {"id": "EngagementToContact", "label": "EngagementToContact", "from": "Engagement", "to": "Contact", "direction": "directed"}, {"id": "EngagementToPracticeDirector", "label": "Engagement To Practice Director", "from": "Engagement", "to": "Employee", "direction": "directed"}, {"id": "EngagementToReltian", "label": "Engagement To Reltio Team", "from": "Engagement", "to": "Employee", "direction": "directed"}, {"id": "OrgToEngagement", "label": "OrgToEngagement", "from": "Organization", "to": "Engagement", "direction": "directed"}, {"id": "EngagementToInvoicedCustomer", "label": "Engagement To Invoiced Customer", "from": "Engagement", "to": "Organization", "direction": "directed"}, {"id": "TechnicalConsultant", "label": "Technical Consultant Individual", "from": "Contact", "to": "Contract", "direction": "directed"}, {"id": "ContractOwner", "label": "Contract Owner", "from": "Contact", "to": "Contract", "direction": "directed"}, {"id": "DnBHierarchy", "label": "DnB Hierarchy", "from": "Organization", "to": "Organization", "direction": "directed"}, {"id": "OrganizationIndividual", "label": "Organization Contact", "from": "Organization", "to": "Individual", "direction": "directed"}, {"id": "affiliatedwith", "label": "affiliatedwith", "from": "Contact", "to": "Organization", "direction": "directed"}, {"id": "AffiliatedWithJob", "label": "Job History Affiliation", "from": "Contact", "to": "Organization", "direction": "directed"}, {"id": "contactToOrgRel", "label": "Contact To Org Relationship", "from": "Contact", "to": "Organization", "direction": "directed"}, {"id": "HouseHoldAffiliatedwith", "label": "HouseHoldAffiliatedwith", "from": "Household", "to": "Organization", "direction": "directed"}, {"id": "AccountTeam", "label": "supported by", "from": "Organization", "to": "Employee", "direction": "directed"}, {"id": "oAuthContactRole", "label": "oAuth Contact Role", "from": "Tenant", "to": "Contact", "direction": "directed"}, {"id": "oAuthEmployeeRole", "label": "oAuth Employee Role", "from": "Tenant", "to": "Employee", "direction": "directed"}, {"id": "ContactOwnerToTenant", "label": "Contact Owner To Tenant", "from": "Tenant", "to": "Contact", "direction": "directed"}, {"id": "EmployeeOwnerToTenant", "label": "Employee Owner To Tenant", "from": "Tenant", "to": "Employee", "direction": "directed"}, {"id": "InitialOwnerToTenant", "label": "Tenant Initial Owner", "from": "Tenant", "to": "Contact", "direction": "directed"}, {"id": "InitialReltioOwnerToTenant", "label": "Tenant Initial Owner (Reltian)", "from": "Tenant", "to": "Employee", "direction": "directed"}, {"id": "ContractToBasePackageTenant", "label": "Contract To Tenant", "from": "Contract", "to": "Tenant", "direction": "directed"}, {"id": "TenantToCustomerDeployment", "label": "Customer Deployment To Tenant", "from": "CustomerDeployment", "to": "Tenant", "direction": "directed"}, {"id": "ContractToCustomerDeployment", "label": "Customer Deployment To Contract", "from": "CustomerDeployment", "to": "Contract", "direction": "directed"}, {"id": "ContractToAdditionalTenant", "label": "Contract To Tenant", "from": "Contract", "to": "Tenant", "direction": "directed"}, {"id": "OrganizationAffiliation", "label": "Organization Affiliation", "from": "Organization", "to": "Organization", "direction": "directed"}, {"id": "ReportsTo", "label": "ReportsTo", "from": "Employee", "to": "Employee", "direction": "directed"}, {"id": "IndividualHasAddress", "label": "has address", "from": "Individual", "to": "Location", "direction": "directed"}, {"id": "OrganizationHasAddress", "label": "has address", "from": "Organization", "to": "Location", "direction": "directed"}, {"id": "CampaignToContact", "label": "Campaign To Contact", "from": "Campaign", "to": "Contact", "direction": "bidirectional"}, {"id": "UDStoContract", "label": "AgentFlow_UnstructuredtoContract", "from": "Tenant", "to": "Contract", "direction": "bidirectional"}], "interactions": [{"id": "PurchaseOrder", "label": "Purchase Order"}, {"id": "GSAccountTimeline", "label": "GS Account Timeline"}, {"id": "fillOutForm", "label": "Fill Out Form"}, {"id": "visitWwebpage", "label": "Visit Webpage"}, {"id": "sendEmail", "label": "Send Email"}, {"id": "openEmail", "label": "Open Email"}, {"id": "clickEmail", "label": "Click Email"}, {"id": "addToList", "label": "Add To List"}, {"id": "ServiceRequest", "label": "Service Request"}, {"id": "TestInteraction", "label": "Service Request"}], "sources": [{"id": "Salesforce", "label": "Salesforce", "abbreviation": "Salesforce", "category": "CRM"}, {"id": "IT-Jira", "label": "IT-Jira", "abbreviation": "IT-Jira", "category": "Support"}, {"id": "Zendesk", "label": "Zendesk", "abbreviation": "Zendesk", "category": "Support"}, {"id": "Gainsight", "label": "Gainsight", "abbreviation": "Gainsight", "category": "CS"}, {"id": "Marketo", "label": "Marketo", "abbreviation": "Marketo", "category": "CRM"}, {"id": "FinancialForce", "label": "Financial Force", "abbreviation": "FinancialForce", "category": "Finance"}, {"id": "oAuth", "label": "oAuth", "abbreviation": "oAuth", "category": "Identity"}, {"id": "REA-Jira", "label": "REA-Jira", "abbreviation": "REA-Jira", "category": "Support"}, {"id": "DnB", "label": "Dun & Bradstreet", "abbreviation": "D&B", "category": "Enrichment"}, {"id": "ReltioGrouping", "label": "ReltioGrouping", "abbreviation": "RGROUPING", "category": "Platform"}, {"id": "FB", "label": "Facebook", "abbreviation": "FB", "category": "Social"}, {"id": "BvD", "label": "Bureau van Dijk", "abbreviation": "BvD", "category": "Enrichment"}, {"id": "RoR", "label": "Reltio on Reltio", "abbreviation": "RoR", "category": "Platform"}, {"id": "GBQ", "label": "GBQ", "abbreviation": "GBQ", "category": "Analytics"}, {"id": "ServiceNow", "label": "ServiceNow", "abbreviation": "SN", "category": "Support"}, {"id": "Okta", "label": "Okta", "abbreviation": "Okta", "category": "Identity"}, {"id": "ReltioCleanser", "label": "Reltio Data Cleanser", "abbreviation": "ReltioCleanser", "category": "Platform"}, {"id": "ReltioStringFunctionCleanser", "label": "Reltio String Function Cleanser", "abbreviation": "ReltioStringFunctionCleanser", "category": "Platform"}, {"id": "AssetPanda", "label": "AssetPanda", "abbreviation": "AssetPanda", "category": "Ops"}, {"id": "ReltioFullNameBuilder", "label": "Reltio Full Name Builder", "abbreviation": "ReltioFullNameBuilder", "category": "Platform"}, {"id": "ERP", "label": "ERP", "abbreviation": "ERP", "category": "ERP"}, {"id": "SAP", "label": "SAP", "abbreviation": "SAP", "category": "ERP"}, {"id": "QuadSci", "label": "QuadSci", "abbreviation": "QuadSci", "category": "Finance"}, {"id": "Skilljar", "label": "Skilljar", "abbreviation": "SKJ", "category": "Enablement"}, {"id": "LNKD", "label": "Linkedin", "abbreviation": "LNKD", "category": "Enrichment"}, {"id": "Aha", "label": "Aha", "abbreviation": "Aha", "category": "Product"}, {"id": "LegacyMDM", "label": "LegacyMDM", "abbreviation": "LMDM", "category": "Legacy"}, {"id": "ThirdPartyList", "label": "Third Party List", "abbreviation": "TPL", "category": "Legacy"}, {"id": "Reltio", "label": "Reltio", "abbreviation": "Reltio", "category": "Platform"}, {"id": "ZoomInfo", "label": "ZoomInfo", "abbreviation": "ZI", "category": "Enrichment"}, {"id": "iCustomer", "label": "iCustomer", "abbreviation": "iCust", "category": "CRM"}, {"id": "TWITTER", "label": "Twitter", "abbreviation": "TWITTER", "category": "Social"}, {"id": "ReltioCaseCleanser", "label": "Reltio Case Cleanser", "abbreviation": "ReltioCaseCleanser", "category": "Platform"}, {"id": "DT_B2B", "label": "DT:CWYAVUGAWGCPAUK", "abbreviation": "DT_B2B", "category": "Data tenant"}, {"id": "PCC", "label": "Platform Control Center", "abbreviation": "PCC", "category": "Analytics"}, {"id": "SFDC", "label": "SFDC", "abbreviation": "Sales Force Dot Com", "category": "CRM"}, {"id": "OC", "label": "OC", "abbreviation": "Orcale", "category": "Commerce"}], "sourceFeeds": [{"from": "Salesforce", "to": "Organization", "label": "source"}, {"from": "IT-Jira", "to": "Ticket", "label": "source"}, {"from": "Zendesk", "to": "Ticket", "label": "source"}, {"from": "Gainsight", "to": "CustomerDeployment", "label": "source"}, {"from": "Marketo", "to": "Contact", "label": "source"}, {"from": "FinancialForce", "to": "Contract", "label": "source"}, {"from": "oAuth", "to": "Tenant", "label": "source"}, {"from": "REA-Jira", "to": "Ticket", "label": "source"}, {"from": "DnB", "to": "Organization", "label": "source"}, {"from": "ReltioGrouping", "to": "Household", "label": "source"}, {"from": "FB", "to": "Contact", "label": "source"}, {"from": "BvD", "to": "Organization", "label": "source"}, {"from": "RoR", "to": "Tenant", "label": "source"}, {"from": "GBQ", "to": "Tenant", "label": "source"}, {"from": "ServiceNow", "to": "Ticket", "label": "source"}, {"from": "Okta", "to": "Tenant", "label": "source"}, {"from": "ReltioCleanser", "to": "Tenant", "label": "source"}, {"from": "ReltioStringFunctionCleanser", "to": "Tenant", "label": "source"}, {"from": "AssetPanda", "to": "Organization", "label": "source"}, {"from": "ReltioFullNameBuilder", "to": "Tenant", "label": "source"}, {"from": "ERP", "to": "Organization", "label": "source"}, {"from": "SAP", "to": "Organization", "label": "source"}, {"from": "QuadSci", "to": "Tenant", "label": "source"}, {"from": "Skilljar", "to": "Course", "label": "source"}, {"from": "LNKD", "to": "Organization", "label": "source"}, {"from": "Aha", "to": "Opportunity", "label": "source"}, {"from": "LegacyMDM", "to": "Organization", "label": "source"}, {"from": "ThirdPartyList", "to": "Organization", "label": "source"}, {"from": "Reltio", "to": "Tenant", "label": "source"}, {"from": "ZoomInfo", "to": "Organization", "label": "source"}, {"from": "iCustomer", "to": "Organization", "label": "source"}, {"from": "TWITTER", "to": "Contact", "label": "source"}, {"from": "ReltioCaseCleanser", "to": "Tenant", "label": "source"}, {"from": "DT_B2B", "to": "Tenant", "label": "source"}, {"from": "PCC", "to": "Tenant", "label": "source"}, {"from": "SFDC", "to": "Organization", "label": "source"}, {"from": "OC", "to": "Organization", "label": "source"}], "connectors": [{"id": "SFDC", "label": "Salesforce connector", "flag": "SFDC_enable", "to": "Tenant"}, {"id": "DNB", "label": "D&B connector", "flag": "DNB_CONNECTOR_enable", "to": "Tenant"}, {"id": "GBQ", "label": "BigQuery connector", "flag": "BIGQUERY_CONNECTOR_enable", "to": "Tenant"}, {"id": "SNOWFLAKE", "label": "Snowflake connector", "flag": "SNOWFLAKE_CONNECTOR_enable", "to": "Tenant"}, {"id": "RIH", "label": "Reltio Integration Hub", "flag": "RIH_enable", "to": "Tenant"}, {"id": "MCP", "label": "Reltio MCP Server", "flag": "MCP_enabled", "to": "Tenant"}, {"id": "AgentFlow", "label": "Reltio AgentFlow", "flag": "agentFlow_enable", "to": "Tenant"}, {"id": "DT_DEA", "label": "DEA data tenant", "flag": "DT_DEA_enable", "to": "Tenant"}, {"id": "DT_NPI", "label": "NPI data tenant", "flag": "DT_NPI_enable", "to": "Tenant"}], "capabilities": [{"id": "RDM", "label": "RDM", "flag": "RDM_enable"}, {"id": "MATCHIQ", "label": "Match IQ", "flag": "MATCHIQ_enable"}, {"id": "CLEANSE", "label": "Cleanse", "flag": "CLEANSE_enable"}, {"id": "WORKFLOW", "label": "Workflow", "flag": "WORKFLOW_enable"}, {"id": "QUEUES", "label": "Queues", "flag": "QUEUES_enable"}, {"id": "ANALYTICS", "label": "Analytics", "flag": "ANALYTICS_enable"}, {"id": "IMAGE", "label": "Image hosting", "flag": "IMAGE_HOSTING_enable"}, {"id": "AUTH", "label": "Auth access", "flag": "AUTH_ACCESS_enable"}], "graphTypes": [{"id": "DnBHierarchy", "label": "D&B Hierarchy", "relations": ["DnBHierarchy"], "type": "logical"}, {"id": "OrganizationHierarchy", "label": "Organization Hierarchy", "relations": ["OrganizationIndividual", "OrganizationAffiliation", "ReportsTo"], "type": "logical"}, {"id": "ReportsToHierarchy", "label": "ReportsTo Graph", "relations": ["ReportsTo"], "type": "logical"}], "grouping": [{"id": "RuleBasedHouseholding", "label": "Rule-based householding", "entity": "Household", "member": "Contact"}]};
+    const SCOPE = "all";
+    const LAYOUT = "dagre";
+    const CORE = new Set(["Organization","CustomerDeployment","Tenant","Contract","Opportunity","Engagement","Employee","Contact"]);
+    const INTEGRATION = new Set(["Organization","CustomerDeployment","Tenant"]);
+    const COLORS = {
+      Organization:"#0000CC", CustomerDeployment:"#0070F2", Tenant:"#2f6a52", Contract:"#C70",
+      Opportunity:"#5050ff", Engagement:"#61c", Employee:"#003", Contact:"#0070F2",
+      Ticket:"#e33", Course:"#497", Location:"#c70", Individual:"#8888b0",
+      Household:"#babade", Supplier:"#2f6a52", Campaign:"#6611cc"
+    };
+
+    function hideByScope(kind, typeId, abstract) {
+      if (SCOPE === "all") return kind !== "entity";
+      if (SCOPE === "core") return kind !== "entity" || !CORE.has(typeId);
+      if (SCOPE === "integration") {
+        if (kind === "entity") return !INTEGRATION.has(typeId);
+        if (kind === "interaction") return true;
+        return !(kind === "source" || kind === "connector" || kind === "capability" || kind === "graph" || kind === "grouping");
+      }
+      return false;
+    }
+
+    function buildElements() {
+      const elements = [];
+      (MODEL.entities || []).forEach((e) => {
+        elements.push({ data: {
+          id: "E:"+e.id, typeId: e.id, label: e.label, kind: "entity", abstract: e.abstract,
+          color: COLORS[e.id] || "#0000CC"
+        }});
+      });
+      (MODEL.interactions || []).forEach((i) => {
+        elements.push({ data: { id: "I:"+i.id, typeId: i.id, label: i.label, kind: "interaction" }});
+      });
+      (MODEL.sources || []).forEach((s) => {
+        elements.push({ data: { id: "S:"+s.id, typeId: s.id, label: s.label, kind: "source" }});
+      });
+      (MODEL.connectors || []).forEach((c) => {
+        elements.push({ data: { id: "C:"+c.id, typeId: c.id, label: c.label, kind: "connector" }});
+      });
+      (MODEL.capabilities || []).forEach((c) => {
+        elements.push({ data: { id: "P:"+c.id, typeId: c.id, label: c.label, kind: "capability" }});
+      });
+      (MODEL.graphTypes || []).forEach((g) => {
+        elements.push({ data: { id: "G:"+g.id, typeId: g.id, label: g.label, kind: "graph" }});
+      });
+      (MODEL.grouping || []).forEach((g) => {
+        elements.push({ data: { id: "H:"+g.id, typeId: g.id, label: g.label, kind: "grouping" }});
+      });
+      const unbundle = (SCOPE === "core");
+      if (unbundle) {
+        const pairMap = new Map();
+        (MODEL.relations || []).forEach((r) => {
+          if (!CORE.has(r.from) || !CORE.has(r.to)) return;
+          if (r.from === r.to) return;
+          const key = r.from + ">" + r.to;
+          const arr = pairMap.get(key) || [];
+          arr.push(r);
+          pairMap.set(key, arr);
+        });
+        pairMap.forEach((rels) => {
+          const first = rels[0];
+          const names = rels.map((x) => x.label || x.id);
+          elements.push({ data: {
+            id: "rel:"+rels.map(x=>x.id).join("+"),
+            source: "E:"+first.from, target: "E:"+first.to,
+            kind: "relation",
+            label: names.join("\n")
+          }});
+        });
+      } else {
+        const pairMap = new Map();
+        (MODEL.relations || []).forEach((r) => {
+          const key = r.from === r.to ? ("E:"+r.from+"|"+r.id) : ["E:"+r.from, "E:"+r.to].sort().join("|");
+          const arr = pairMap.get(key) || [];
+          arr.push(r);
+          pairMap.set(key, arr);
+        });
+        pairMap.forEach((rels) => {
+          const first = rels[0];
+          elements.push({ data: {
+            id: "rel:"+rels.map(x=>x.id).join("+"),
+            source: "E:"+first.from, target: "E:"+first.to,
+            kind: "relation",
+            label: rels.length > 1 ? String(rels.length) : (first.label || first.id)
+          }});
+        });
+      }
+      if (SCOPE === "integration") {
+        (MODEL.sourceFeeds || []).forEach((f, i) => {
+          elements.push({ data: { id: "feed:"+i, source: "S:"+f.from, target: "E:"+f.to, kind: "feed", label: "" }});
+        });
+      }
+      (MODEL.connectors || []).forEach((c) => {
+        elements.push({ data: { id: "cen:"+c.id, source: "C:"+c.id, target: "E:"+(c.to || "Tenant"), kind: "enable", label: "" }});
+      });
+      (MODEL.capabilities || []).forEach((c) => {
+        elements.push({ data: { id: "pen:"+c.id, source: "P:"+c.id, target: "E:Tenant", kind: "enable", label: "" }});
+      });
+      (MODEL.graphTypes || []).forEach((g) => {
+        const seen = new Set();
+        (g.relations || []).forEach((rid) => {
+          (MODEL.relations || []).forEach((r) => {
+            if (r.id !== rid) return;
+            ["from", "to"].forEach((end) => {
+              const key = g.id + "|" + r[end];
+              if (seen.has(key)) return;
+              seen.add(key);
+              elements.push({ data: { id: "gt:"+g.id+":"+r[end], source: "G:"+g.id, target: "E:"+r[end], kind: "graphedge", label: "" }});
+            });
+          });
+        });
+      });
+      return elements;
+    }
+
+    function start() {
+      if (typeof cytoscape === "undefined") {
+        document.body.insertAdjacentHTML("afterbegin", "<p style='color:red'>Cytoscape failed to load</p>");
+        document.title = "READY";
+        return;
+      }
+      if (typeof cytoscapeDagre !== "undefined") {
+        try { cytoscape.use(cytoscapeDagre); } catch (e) { console.warn(e); }
+      }
+    const cy = cytoscape({
+      container: document.getElementById("cy"),
+      elements: buildElements(),
+      minZoom: 0.1,
+      maxZoom: 3,
+      wheelSensitivity: 0.2,
+      style: [
+        { selector: "node", style: { label:"data(label)", "font-size": SCOPE === "core" ? 18 : 14, "font-weight":500, color:"#0e0e25", "text-valign":"bottom", "text-margin-y":10, "text-wrap":"wrap", "text-max-width":160 }},
+        { selector: "node[kind = 'entity']", style: { width: SCOPE === "core" ? 88 : 64, height: SCOPE === "core" ? 88 : 64, shape:"ellipse", "background-color":"data(color)", "font-weight":600 }},
+        { selector: "node[abstract]", style: { "border-width":1.5, "border-style":"dashed", "border-color":"#8888b0", "background-opacity":0.55 }},
+        { selector: "node[kind = 'interaction']", style: { width:40, height:40, shape:"ellipse", "background-color":"#6611cc26", "border-width":1.5, "border-style":"dashed", "border-color":"#61c" }},
+        { selector: "node[kind = 'source']", style: { width:38, height:38, shape:"ellipse", "background-color":"#44997726", "border-width":1.5, "border-style":"dashed", "border-color":"#497" }},
+        { selector: "node[kind = 'connector']", style: { width:52, height:34, shape:"round-rectangle", "background-color":"#C70", color:"#fff", "text-valign":"center", "text-margin-y":0, "font-size":9, "font-weight":600, "text-max-width":50 }},
+        { selector: "node[kind = 'capability']", style: { width:46, height:30, shape:"round-rectangle", "background-color":"#8888b0", color:"#fff", "text-valign":"center", "text-margin-y":0, "font-size":9, "text-max-width":44 }},
+        { selector: "node[kind = 'graph']", style: { width:44, height:44, shape:"diamond", "background-color":"#0070F2" }},
+        { selector: "node[kind = 'grouping']", style: { width:44, height:44, shape:"hexagon", "background-color":"#babade" }},
+        { selector: "edge", style: { "curve-style":"bezier", width: SCOPE === "core" ? 2.2 : 1.6, "line-color":"#8b8bb0", "target-arrow-color":"#8b8bb0", "target-arrow-shape":"triangle", "arrow-scale":1, "font-size": SCOPE === "core" ? 16 : 12, color:"#3d3d6b", "text-background-color":"#fff", "text-background-opacity":1, "text-background-padding":5, "text-wrap":"wrap", "text-max-width": SCOPE === "core" ? 240 : 140, "text-valign":"center", label:"data(label)" }},
+        { selector: "edge[kind = 'feed']", style: { "line-style":"dashed", "line-color":"#497", "target-arrow-color":"#497", width:1.1 }},
+        { selector: "edge[kind = 'enable']", style: { "line-style":"dashed", "line-color":"#C70", "target-arrow-color":"#C70", width:1.1 }},
+        { selector: "edge[kind = 'graphedge']", style: { "line-style":"dotted", "line-color":"#0070F2", "target-arrow-color":"#0070F2" }}
+      ]
+    });
+    cy.nodes().filter((n) => hideByScope(n.data("kind"), n.data("typeId"), n.data("abstract"))).remove();
+    const common = { animate:false, fit:true, padding: SCOPE === "core" ? 80 : 56 };
+    const done = function() {};
+    if (LAYOUT === "cose") cy.layout({ name:"cose", ...common, nodeRepulsion: 28000, idealEdgeLength: 140, gravity:0.18, numIter:2200, stop: done }).run();
+    else cy.layout({ name:"dagre", ...common, rankDir:"LR", nodeSep: SCOPE === "core" ? 180 : 96, rankSep: SCOPE === "core" ? 380 : 200, edgeSep: SCOPE === "core" ? 80 : 40, stop: done }).run();
+    }
+    window.addEventListener("load", function() { setTimeout(start, 800); });
+  </script>
+</body>
+</html>
